@@ -55,24 +55,24 @@ public class IdeiaService {
                 .bodyValue(requestBody)
                 .retrieve()
                 .bodyToMono((String.class))
-                .map(res -> {
+                .map(response -> {
                     try {
-                        ObjectMapper map = new ObjectMapper();
-                        JsonNode jsonNode = map.readTree(res);
+                        ObjectMapper mapper = new ObjectMapper();
+                        JsonNode jsonNode = mapper.readTree(response);
                         JsonNode candidates = jsonNode.path("candidates");
 
-                        if (candidates.isEmpty() && candidates.isArray()) {
+                        if (candidates.isArray() && !candidates.isEmpty()) {
                             JsonNode content = candidates.get(0).path("content");
                             if (content.has("parts")) {
                                 return content.get("parts").get(0).path("text").asText();
-
                             }
                         }
+                        return "Não foi possivel gerar uma ideia de projeto";
+
                     } catch (Exception e) {
                         e.printStackTrace();
-                        return "deu errado";
+                        return "A api não funcionou " + e.getMessage();
                     }
-                    return res;
                 });
     }
 }
