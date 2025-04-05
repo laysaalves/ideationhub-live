@@ -3,6 +3,7 @@ package dev.layseiras.IdeationHub;
 import io.github.cdimascio.dotenv.Dotenv;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 
 @SpringBootApplication
 public class IdeationHubApplication {
@@ -12,6 +13,7 @@ public class IdeationHubApplication {
 		Dotenv dotenv = Dotenv.load();
 		System.setProperty("API_KEY", dotenv.get("API_KEY"));
 		System.setProperty("API_URL", dotenv.get("API_URL"));
+		System.setProperty("token", dotenv.get("token"));
 
 		SpringApplication.run(IdeationHubApplication.class, args);
 	}
