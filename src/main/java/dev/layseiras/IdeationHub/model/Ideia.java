@@ -19,6 +19,11 @@ public class Ideia {
         this.senioridade = senioridade;
     }
 
+    public Ideia(String tecnologia, String tema) {
+        this.tecnologia = tecnologia;
+        this.tema = tema;
+    }
+
     public String getCategoria() {
         return categoria;
     }
