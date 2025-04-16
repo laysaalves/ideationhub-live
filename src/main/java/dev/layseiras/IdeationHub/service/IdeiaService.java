@@ -3,11 +3,18 @@ package dev.layseiras.IdeationHub.service;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.layseiras.IdeationHub.config.GeminiApi;
+import dev.layseiras.IdeationHub.config.GithubApi;
 import dev.layseiras.IdeationHub.model.Ideia;
+import dev.layseiras.IdeationHub.model.Repository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
+
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class IdeiaService {
@@ -42,7 +49,7 @@ public class IdeiaService {
                     }
                   ],
                       "generationConfig": {
-                        "maxOutputTokens": 100
+                        "maxOutputTokens": 220
                       }
                 }
                 """.formatted(ideia.getCategoria(), ideia.getSenioridade(), ideia.getTema(), ideia.getTecnologia());
@@ -74,5 +81,30 @@ public class IdeiaService {
                         return "A api não funcionou " + e.getMessage();
                     }
                 });
+    }
+
+    public Mono<String> gerarIdeiaComGithub(String username, GithubApi githubApi) {
+        return Mono.fromCallable(() -> githubApi.getRepositories("public", username))
+                .map(this::filtroDeRepositorios)
+                .flatMap(this::ideiaGerada);
+    }
+
+    private Ideia filtroDeRepositorios(List<Repository> repos) {
+        String linguagemMaisUsada = repos.stream()
+                .filter(repo -> repo.language() != null)
+                .collect(Collectors.groupingBy(Repository::language, Collectors.counting()))
+                .entrySet().stream()
+                .max(Map.Entry.comparingByValue())
+                .map(Map.Entry::getKey)
+                .orElse("não foi possivel escolher uma linguagem");
+
+        String temaDoProjeto = repos.stream()
+                .filter(repo -> repo.desc() != null && !repo.desc().isEmpty())
+                .map(Repository::desc)
+                .max(Comparator.comparingInt(String::length)).orElse("não foi possivel escolher um tema");
+
+        System.out.println(linguagemMaisUsada);
+        System.out.println(temaDoProjeto);
+        return new Ideia(linguagemMaisUsada, temaDoProjeto);
     }
 }
