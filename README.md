@@ -77,10 +77,10 @@ Você pode contribuir seguindo os passos:
 
 ---
 
-## License
-This project is licensed under the [MIT License](LICENSE).
+## Licença
+Mais detalhes sobre a licença que protege esse projeto em [MIT License](LICENSE).
 
 ---
 
-## Contact
-For questions or feedback, please contact us at [your-email@example.com](mailto:contato@java10x.dev).
+## Contato
+Curtiu? Você pode me mandar um feedback em: [laysa.developer@gmail.com](laysa.developer@gmail.com).
